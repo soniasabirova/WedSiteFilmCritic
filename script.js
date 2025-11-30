@@ -179,20 +179,39 @@ if (registerForm) {
 }
 
 // ============================================
-// Форма добавления фильма
+// Форма добавления/редактирования фильма
 // ============================================
 
 const addMovieForm = document.getElementById('addMovieForm');
 if (addMovieForm) {
+    // Проверяем, есть ли ID в URL (режим редактирования)
+    const urlParams = new URLSearchParams(window.location.search);
+    const editId = urlParams.get('edit');
+    
+    if (editId) {
+        // Режим редактирования
+        document.getElementById('pageTitle').textContent = 'Редактировать фильм';
+        document.getElementById('submitBtn').textContent = 'Сохранить изменения';
+        document.getElementById('movieId').value = editId;
+        
+        // Загрузить данные фильма
+        loadMovieForEdit(editId);
+    }
+    
     addMovieForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
+        const movieId = document.getElementById('movieId').value;
         const title = document.getElementById('movieTitle');
         const type = document.getElementById('movieType');
-        const genre = document.getElementById('movieGenre');
         const date = document.getElementById('movieDate');
         const rating = document.querySelector('input[name="rating"]:checked');
         const review = document.getElementById('movieReview');
+        
+        // Получаем выбранные жанры
+        const selectedGenres = Array.from(document.querySelectorAll('input[name="genre"]:checked'))
+            .map(cb => cb.value);
+        
         let valid = true;
         
         if (!title.value.trim()) {
@@ -209,11 +228,13 @@ if (addMovieForm) {
             clearError(type);
         }
         
-        if (!genre.value) {
-            showError(genre, 'Выберите жанр');
+        // Проверка жанров
+        const genreError = document.getElementById('genreError');
+        if (selectedGenres.length === 0) {
+            if (genreError) genreError.style.display = 'block';
             valid = false;
         } else {
-            clearError(genre);
+            if (genreError) genreError.style.display = 'none';
         }
         
         if (!date.value) {
@@ -244,27 +265,57 @@ if (addMovieForm) {
         
         if (!valid) return;
         
+        const movieData = {
+            title: title.value.trim(),
+            type: type.value,
+            genre: selectedGenres.join(','),
+            rating: parseInt(rating.value),
+            watch_date: date.value,
+            review: review?.value.trim() || ''
+        };
+        
         try {
-            await addMovie({
-                title: title.value.trim(),
-                type: type.value,
-                genre: genre.value,
-                rating: parseInt(rating.value),
-                watch_date: date.value,
-                review: review?.value.trim() || ''
-            });
-            
-            alert('Фильм добавлен!');
+            if (movieId) {
+                // Редактирование
+                await updateMovie(movieId, movieData);
+                alert('Фильм обновлён!');
+            } else {
+                // Добавление
+                await addMovie(movieData);
+                alert('Фильм добавлен!');
+            }
             window.location.href = '/index.html';
         } catch (error) {
             alert('Ошибка: ' + error.message);
         }
     });
-    
-    addMovieForm.querySelectorAll('input, select, textarea').forEach(el => {
-        el.addEventListener('input', () => clearError(el));
-        el.addEventListener('change', () => clearError(el));
-    });
+}
+
+// Загрузка фильма для редактирования
+async function loadMovieForEdit(id) {
+    try {
+        const data = await getMovie(id);
+        const movie = data.movie;
+        
+        document.getElementById('movieTitle').value = movie.title;
+        document.getElementById('movieType').value = movie.type;
+        document.getElementById('movieDate').value = movie.watch_date;
+        document.getElementById('movieReview').value = movie.review || '';
+        
+        // Установить рейтинг
+        const ratingInput = document.querySelector(`input[name="rating"][value="${movie.rating}"]`);
+        if (ratingInput) ratingInput.checked = true;
+        
+        // Установить жанры
+        const genres = movie.genres || movie.genre.split(',');
+        genres.forEach(g => {
+            const cb = document.querySelector(`input[name="genre"][value="${g.trim()}"]`);
+            if (cb) cb.checked = true;
+        });
+    } catch (error) {
+        alert('Ошибка загрузки: ' + error.message);
+        window.location.href = '/index.html';
+    }
 }
 
 // ============================================
@@ -445,9 +496,16 @@ function renderMoviesList(movies) {
             <div class="movie-rating">${'★'.repeat(m.rating)}${'☆'.repeat(5 - m.rating)}</div>
             <div class="movie-date">${formatDate(m.watch_date)}</div>
             ${m.review ? `<div class="movie-review">${m.review}</div>` : ''}
-            <button class="btn-delete-movie" onclick="handleDeleteMovie(${m.id})">Удалить</button>
+            <div class="movie-actions">
+                <button class="btn-edit-movie" onclick="handleEditMovie(${m.id})">Редактировать</button>
+                <button class="btn-delete-movie" onclick="handleDeleteMovie(${m.id})">Удалить</button>
+            </div>
         </div>
     `).join('');
+}
+
+function handleEditMovie(id) {
+    window.location.href = `/add-movie.html?edit=${id}`;
 }
 
 async function handleDeleteMovie(id) {

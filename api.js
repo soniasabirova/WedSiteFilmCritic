@@ -82,6 +82,17 @@ async function addMovie(data) {
     });
 }
 
+async function getMovie(id) {
+    return await apiRequest(`/movies/${id}`);
+}
+
+async function updateMovie(id, data) {
+    return await apiRequest(`/movies/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(data)
+    });
+}
+
 async function deleteMovie(id) {
     return await apiRequest(`/movies/${id}`, { method: 'DELETE' });
 }

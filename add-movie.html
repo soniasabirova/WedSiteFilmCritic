@@ -22,11 +22,13 @@
 
     <main class="main-content add-movie-page">
         <div class="page-header">
-            <h1 class="page-title">Добавить фильм/сериал</h1>
+            <h1 class="page-title" id="pageTitle">Добавить фильм/сериал</h1>
             <a href="index.html" class="btn-back">← Назад</a>
         </div>
 
         <form class="add-movie-form" id="addMovieForm" novalidate>
+            <input type="hidden" id="movieId" value="">
+            
             <div class="form-row">
                 <div class="input-group">
                     <label for="movieTitle">Название *</label>
@@ -45,29 +47,61 @@
                 </div>
                 
                 <div class="input-group">
-                    <label for="movieGenre">Жанр *</label>
-                    <select id="movieGenre" name="genre" class="filter-select">
-                        <option value="">Выберите жанр</option>
-                        <option value="action">Боевик</option>
-                        <option value="comedy">Комедия</option>
-                        <option value="drama">Драма</option>
-                        <option value="fantasy">Фэнтези</option>
-                        <option value="horror">Ужасы</option>
-                        <option value="scifi">Фантастика</option>
-                        <option value="thriller">Триллер</option>
-                        <option value="romance">Мелодрама</option>
-                        <option value="animation">Анимация</option>
-                        <option value="documentary">Документальный</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="form-row two-cols">
-                <div class="input-group">
                     <label for="movieDate">Дата просмотра *</label>
                     <input type="date" id="movieDate" name="date">
                 </div>
-                
+            </div>
+
+            <div class="form-row">
+                <div class="input-group">
+                    <label>Жанры * (выберите один или несколько)</label>
+                    <div class="genres-grid" id="genresGrid">
+                        <label class="genre-checkbox">
+                            <input type="checkbox" name="genre" value="action">
+                            <span>Боевик</span>
+                        </label>
+                        <label class="genre-checkbox">
+                            <input type="checkbox" name="genre" value="comedy">
+                            <span>Комедия</span>
+                        </label>
+                        <label class="genre-checkbox">
+                            <input type="checkbox" name="genre" value="drama">
+                            <span>Драма</span>
+                        </label>
+                        <label class="genre-checkbox">
+                            <input type="checkbox" name="genre" value="fantasy">
+                            <span>Фэнтези</span>
+                        </label>
+                        <label class="genre-checkbox">
+                            <input type="checkbox" name="genre" value="horror">
+                            <span>Ужасы</span>
+                        </label>
+                        <label class="genre-checkbox">
+                            <input type="checkbox" name="genre" value="scifi">
+                            <span>Фантастика</span>
+                        </label>
+                        <label class="genre-checkbox">
+                            <input type="checkbox" name="genre" value="thriller">
+                            <span>Триллер</span>
+                        </label>
+                        <label class="genre-checkbox">
+                            <input type="checkbox" name="genre" value="romance">
+                            <span>Мелодрама</span>
+                        </label>
+                        <label class="genre-checkbox">
+                            <input type="checkbox" name="genre" value="animation">
+                            <span>Анимация</span>
+                        </label>
+                        <label class="genre-checkbox">
+                            <input type="checkbox" name="genre" value="documentary">
+                            <span>Документальный</span>
+                        </label>
+                    </div>
+                    <span class="error-message" id="genreError" style="display:none;">Выберите хотя бы один жанр</span>
+                </div>
+            </div>
+
+            <div class="form-row">
                 <div class="input-group">
                     <label>Ваша оценка *</label>
                     <div class="rating-input">
@@ -88,13 +122,13 @@
             <div class="form-row">
                 <div class="input-group">
                     <label for="movieReview">Отзыв</label>
-                    <textarea id="movieReview" name="review" placeholder="Напишите свой отзыв о фильме..." rows="4"></textarea>
+                    <textarea id="movieReview" name="review" placeholder="Напишите свой отзыв..." rows="4"></textarea>
                 </div>
             </div>
 
             <div class="form-actions">
                 <button type="button" class="btn-cancel" onclick="window.location.href='index.html'">Отмена</button>
-                <button type="submit" class="btn-primary">Сохранить</button>
+                <button type="submit" class="btn-primary" id="submitBtn">Сохранить</button>
             </div>
         </form>
     </main>

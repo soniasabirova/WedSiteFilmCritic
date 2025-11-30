@@ -908,6 +908,74 @@ body {
     margin-top: 0;
 }
 
+/* Сетка жанров */
+.genres-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.genre-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.genre-checkbox:hover {
+    border-color: var(--accent-red);
+}
+
+.genre-checkbox input {
+    display: none;
+}
+
+.genre-checkbox input:checked + span {
+    color: var(--text-primary);
+}
+
+.genre-checkbox:has(input:checked) {
+    background: var(--accent-red);
+    border-color: var(--accent-red);
+}
+
+.genre-checkbox:has(input:checked) span {
+    color: var(--text-primary);
+}
+
+/* Кнопки действий с фильмом */
+.movie-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.btn-edit-movie {
+    flex: 1;
+    padding: 8px 12px;
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-edit-movie:hover {
+    border-color: var(--accent-red);
+    color: var(--accent-red);
+}
+
 /*Модальное окно*/
 
 .modal-overlay {
