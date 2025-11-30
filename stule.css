@@ -1,0 +1,19 @@
+h1 {
+    color: #ffffff;
+    position: absolute;
+    top: 40px;
+    left: 87px;
+    font-weight: 800;
+    font-size: 32px;
+}
+.auth-window {
+    position: absolute;
+    width: 700px;
+    height: 650px;
+    top: 180px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #969696;
+    border-radius: 30px;
+    bottom: 194px;
+}
