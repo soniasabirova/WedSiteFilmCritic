@@ -1,0 +1,59 @@
+# Docker Compose для КиноКритик
+
+services:
+  # PostgreSQL база данных
+  db:
+    image: postgres:15-alpine
+    container_name: kinocritic-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: kinocritic
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d kinocritic"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Flask Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: kinocritic-backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres123@db:5432/kinocritic
+      JWT_SECRET_KEY: kinocritic-super-secret-jwt-key-2025
+      SECRET_KEY: kinocritic-super-secret-flask-key-2025
+    ports:
+      - "5000:5000"
+    volumes:
+      # Backend файлы (для горячей перезагрузки)
+      - ./backend/app.py:/app/app.py:ro
+      - ./backend/config.py:/app/config.py:ro
+      - ./backend/models.py:/app/models.py:ro
+      - ./backend/routes:/app/routes:ro
+      # Фронтенд файлы
+      - ./index.html:/app/../index.html:ro
+      - ./login.html:/app/../login.html:ro
+      - ./register.html:/app/../register.html:ro
+      - ./movies.html:/app/../movies.html:ro
+      - ./add-movie.html:/app/../add-movie.html:ro
+      - ./stule.css:/app/../stule.css:ro
+      - ./script.js:/app/../script.js:ro
+      - ./api.js:/app/../api.js:ro
+      - ./Icon.png:/app/../Icon.png:ro
+      - ./Eye.png:/app/../Eye.png:ro
+      - ./EyeSlash.png:/app/../EyeSlash.png:ro
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

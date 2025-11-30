@@ -1,7 +1,5 @@
-/* ============================================
-   КиноКритик - Общие стили
-   Тёмная тема с красными акцентами
-   ============================================ */
+
+   /*КиноКритик - Общие стили*/
 
 /* CSS Variables */
 :root {
@@ -70,6 +68,18 @@ body {
     background-clip: text;
 }
 
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.username-display {
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+}
+
 .account-icon {
     display: flex;
     align-items: center;
@@ -87,9 +97,7 @@ body {
     object-fit: contain;
 }
 
-/* ============================================
-   Страницы авторизации
-   ============================================ */
+/* Страницы авторизации */
 
 .auth-container {
     min-height: 100vh;
@@ -362,9 +370,7 @@ body {
     border-color: var(--success-color);
 }
 
-/* ============================================
-   Главная страница
-   ============================================ */
+   /*Главная страница*/
 
 .main-content {
     padding: 100px 40px 40px;
@@ -701,9 +707,7 @@ body {
     color: #ffd700;
 }
 
-/* ============================================
-   Страница всех фильмов
-   ============================================ */
+   /*Страница всех фильмов*/
 
 .movies-page .page-header,
 .add-movie-page .page-header {
@@ -822,9 +826,7 @@ body {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
-/* ============================================
-   Страница добавления фильма
-   ============================================ */
+/* Страница добавления фильма*/
 
 .add-movie-form {
     background: var(--bg-card);
@@ -906,9 +908,7 @@ body {
     margin-top: 0;
 }
 
-/* ============================================
-   Модальное окно
-   ============================================ */
+/*Модальное окно*/
 
 .modal-overlay {
     position: fixed;
@@ -967,9 +967,7 @@ body {
     gap: 16px;
 }
 
-/* ============================================
-   Адаптивность
-   ============================================ */
+/*Адаптивность*/
 
 @media (max-width: 900px) {
     .movies-cards {
@@ -1073,4 +1071,45 @@ body {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* Сообщение об ошибке формы */
+.form-error {
+    background: rgba(255, 71, 87, 0.15);
+    border: 1px solid var(--error-color);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    color: var(--error-color);
+    font-size: 14px;
+    text-align: center;
+    display: none;
+}
+
+/* Кнопка удаления фильма */
+.btn-delete-movie {
+    margin-top: 12px;
+    padding: 8px 16px;
+    background: transparent;
+    border: 1px solid var(--error-color);
+    border-radius: 8px;
+    color: var(--error-color);
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-delete-movie:hover {
+    background: var(--error-color);
+    color: var(--text-primary);
+}
+
+/* Стиль карточки фильма с данными */
+.movies-list .movie-card.filled {
+    cursor: default;
+}
+
+.movies-list .movie-card.filled:hover .btn-delete-movie {
+    opacity: 1;
 }

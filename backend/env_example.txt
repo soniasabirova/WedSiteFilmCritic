@@ -1,0 +1,11 @@
+# Скопируйте этот файл в .env и заполните своими значениями
+
+# База данных PostgreSQL
+DATABASE_URL=postgresql://username:password@localhost:5432/kinocritic
+
+# Секретный ключ для JWT токенов
+JWT_SECRET_KEY=your-secret-key-here
+
+# Секретный ключ Flask
+SECRET_KEY=your-flask-secret-key
+

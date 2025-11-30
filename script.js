@@ -1,107 +1,112 @@
 // ============================================
-// КиноКритик - JavaScript для авторизации
+// КиноКритик - JavaScript
 // ============================================
 
-// Переключение видимости пароля
+// ============================================
+// Утилиты для форм
+// ============================================
+
 function togglePassword(inputId) {
     const input = document.getElementById(inputId);
+    if (!input) return;
+    
     const button = input.parentElement.querySelector('.toggle-password');
-    const icon = button.querySelector('.eye-icon');
+    const icon = button?.querySelector('.eye-icon');
     
     if (input.type === 'password') {
         input.type = 'text';
-        icon.src = 'EyeSlash.png';
-        icon.alt = 'Скрыть пароль';
+        if (icon) {
+            icon.src = 'EyeSlash.png';
+            icon.alt = 'Скрыть пароль';
+        }
     } else {
         input.type = 'password';
-        icon.src = 'Eye.png';
-        icon.alt = 'Показать пароль';
+        if (icon) {
+            icon.src = 'Eye.png';
+            icon.alt = 'Показать пароль';
+        }
     }
 }
 
-// Валидация email
 function validateEmail(email) {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-// Показать ошибку для поля
 function showError(input, message) {
-    const group = input.closest('.input-group');
+    const group = input?.closest('.input-group');
+    if (!group) return;
+    
     group.classList.add('error');
-    group.classList.remove('success');
     
-    // Удалить старое сообщение об ошибке
-    const oldError = group.querySelector('.error-message');
-    if (oldError) oldError.remove();
-    
-    // Добавить новое сообщение об ошибке
-    const errorDiv = document.createElement('span');
-    errorDiv.className = 'error-message';
-    errorDiv.textContent = message;
-    group.appendChild(errorDiv);
+    let errorMsg = group.querySelector('.error-message');
+    if (!errorMsg) {
+        errorMsg = document.createElement('span');
+        errorMsg.className = 'error-message';
+        group.appendChild(errorMsg);
+    }
+    errorMsg.textContent = message;
 }
 
-// Убрать ошибку
 function clearError(input) {
-    const group = input.closest('.input-group');
-    group.classList.remove('error');
+    const group = input?.closest('.input-group');
+    if (!group) return;
     
-    const errorMessage = group.querySelector('.error-message');
-    if (errorMessage) errorMessage.remove();
+    group.classList.remove('error');
+    const errorMsg = group.querySelector('.error-message');
+    if (errorMsg) errorMsg.remove();
 }
 
-// Показать успех
-function showSuccess(input) {
-    const group = input.closest('.input-group');
-    group.classList.remove('error');
-    group.classList.add('success');
-    
-    const errorMessage = group.querySelector('.error-message');
-    if (errorMessage) errorMessage.remove();
+function showFormError(form, message) {
+    let errorDiv = form.querySelector('.form-error');
+    if (!errorDiv) {
+        errorDiv = document.createElement('div');
+        errorDiv.className = 'form-error';
+        form.insertBefore(errorDiv, form.firstChild);
+    }
+    errorDiv.textContent = message;
+    errorDiv.style.display = 'block';
 }
 
-// Обработка формы входа
+function hideFormError(form) {
+    const errorDiv = form.querySelector('.form-error');
+    if (errorDiv) errorDiv.style.display = 'none';
+}
+
+// ============================================
+// Форма входа
+// ============================================
+
 const loginForm = document.getElementById('loginForm');
 if (loginForm) {
-    loginForm.addEventListener('submit', function(e) {
+    loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        hideFormError(loginForm);
         
         const username = document.getElementById('username');
         const password = document.getElementById('password');
-        let isValid = true;
+        let valid = true;
         
-        // Валидация имени пользователя
-        if (!username.value.trim()) {
-            showError(username, 'Введите имя пользователя');
-            isValid = false;
-        } else if (username.value.length < 3) {
-            showError(username, 'Имя пользователя должно быть не менее 3 символов');
-            isValid = false;
+        if (!username.value.trim() || username.value.length < 3) {
+            showError(username, 'Минимум 3 символа');
+            valid = false;
         } else {
             clearError(username);
         }
         
-        // Валидация пароля
-        if (!password.value) {
-            showError(password, 'Введите пароль');
-            isValid = false;
-        } else if (password.value.length < 8) {
-            showError(password, 'Минимальное допустимое количество символов - 8');
-            isValid = false;
+        if (!password.value || password.value.length < 8) {
+            showError(password, 'Минимум 8 символов');
+            valid = false;
         } else {
             clearError(password);
         }
         
-        if (isValid) {
-            // Здесь будет отправка данных на сервер
-            console.log('Форма входа отправлена:', {
-                username: username.value,
-                password: password.value
-            });
-            
-            // Показать сообщение об успехе (временно)
-            alert('Вход выполнен успешно!');
+        if (!valid) return;
+        
+        try {
+            await login(username.value.trim(), password.value);
+            window.location.href = '/index.html';
+        } catch (error) {
+            showFormError(loginForm, error.message);
         }
     });
     
@@ -111,99 +116,67 @@ if (loginForm) {
     });
 }
 
-// Обработка формы регистрации
+// ============================================
+// Форма регистрации
+// ============================================
+
 const registerForm = document.getElementById('registerForm');
 if (registerForm) {
-    registerForm.addEventListener('submit', function(e) {
+    registerForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        hideFormError(registerForm);
         
         const username = document.getElementById('username');
         const email = document.getElementById('email');
         const password = document.getElementById('password');
         const confirmPassword = document.getElementById('confirmPassword');
-        let isValid = true;
+        let valid = true;
         
-        // Валидация имени пользователя
-        if (!username.value.trim()) {
-            showError(username, 'Введите имя пользователя');
-            isValid = false;
-        } else if (username.value.length < 3) {
-            showError(username, 'Имя пользователя должно быть не менее 3 символов');
-            isValid = false;
+        if (!username.value.trim() || username.value.length < 3) {
+            showError(username, 'Минимум 3 символа');
+            valid = false;
         } else if (!/^[a-zA-Z0-9_]+$/.test(username.value)) {
-            showError(username, 'Только латинские буквы, цифры и _');
-            isValid = false;
+            showError(username, 'Только латиница, цифры и _');
+            valid = false;
         } else {
             clearError(username);
         }
         
-        // Валидация email
-        if (!email.value.trim()) {
-            showError(email, 'Введите email');
-            isValid = false;
-        } else if (!validateEmail(email.value)) {
+        if (!email.value.trim() || !validateEmail(email.value)) {
             showError(email, 'Введите корректный email');
-            isValid = false;
+            valid = false;
         } else {
             clearError(email);
         }
         
-        // Валидация пароля
-        if (!password.value) {
-            showError(password, 'Введите пароль');
-            isValid = false;
-        } else if (password.value.length < 8) {
-            showError(password, 'Минимальное допустимое количество символов - 8');
-            isValid = false;
+        if (!password.value || password.value.length < 8) {
+            showError(password, 'Минимум 8 символов');
+            valid = false;
         } else {
             clearError(password);
         }
         
-        // Валидация подтверждения пароля
-        if (!confirmPassword.value) {
-            showError(confirmPassword, 'Подтвердите пароль');
-            isValid = false;
-        } else if (confirmPassword.value !== password.value) {
+        if (confirmPassword.value !== password.value) {
             showError(confirmPassword, 'Пароли не совпадают');
-            isValid = false;
+            valid = false;
         } else {
             clearError(confirmPassword);
         }
         
-        if (isValid) {
-            // Здесь будет отправка данных на сервер
-            console.log('Форма регистрации отправлена:', {
-                username: username.value,
-                email: email.value,
-                password: password.value
-            });
-            
-            // Показать сообщение об успехе (временно)
-            alert('Регистрация прошла успешно! Теперь вы можете войти.');
-            window.location.href = 'login.html';
+        if (!valid) return;
+        
+        try {
+            await register(username.value.trim(), email.value.trim(), password.value);
+            window.location.href = '/index.html';
+        } catch (error) {
+            showFormError(registerForm, error.message);
         }
     });
     
-    // Очистка ошибок при вводе
     registerForm.querySelectorAll('input').forEach(input => {
-        input.addEventListener('input', () => {
-            if (input.closest('.input-group')) {
-                clearError(input);
-            }
-        });
+        input.addEventListener('input', () => clearError(input));
     });
 }
-
-// Анимация при фокусе на input
-document.querySelectorAll('.input-group input').forEach(input => {
-    input.addEventListener('focus', function() {
-        this.closest('.input-group').classList.add('focused');
-    });
-    
-    input.addEventListener('blur', function() {
-        this.closest('.input-group').classList.remove('focused');
-    });
-});
 
 // ============================================
 // Форма добавления фильма
@@ -211,7 +184,7 @@ document.querySelectorAll('.input-group input').forEach(input => {
 
 const addMovieForm = document.getElementById('addMovieForm');
 if (addMovieForm) {
-    addMovieForm.addEventListener('submit', function(e) {
+    addMovieForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
         const title = document.getElementById('movieTitle');
@@ -219,91 +192,276 @@ if (addMovieForm) {
         const genre = document.getElementById('movieGenre');
         const date = document.getElementById('movieDate');
         const rating = document.querySelector('input[name="rating"]:checked');
-        let isValid = true;
+        const review = document.getElementById('movieReview');
+        let valid = true;
         
-        // Валидация названия
         if (!title.value.trim()) {
             showError(title, 'Заполните поле');
-            isValid = false;
+            valid = false;
         } else {
             clearError(title);
         }
         
-        // Валидация типа
         if (!type.value) {
-            showError(type, 'Заполните поле');
-            isValid = false;
+            showError(type, 'Выберите тип');
+            valid = false;
         } else {
             clearError(type);
         }
         
-        // Валидация жанра
         if (!genre.value) {
-            showError(genre, 'Заполните поле');
-            isValid = false;
+            showError(genre, 'Выберите жанр');
+            valid = false;
         } else {
             clearError(genre);
         }
         
-        // Валидация даты
         if (!date.value) {
-            showError(date, 'Заполните поле');
-            isValid = false;
+            showError(date, 'Выберите дату');
+            valid = false;
         } else {
             clearError(date);
         }
         
-        // Валидация рейтинга
-        const ratingGroup = document.querySelector('.rating-input').closest('.input-group');
+        const ratingGroup = document.querySelector('.rating-input')?.closest('.input-group');
         if (!rating) {
-            ratingGroup.classList.add('error');
-            let errorMsg = ratingGroup.querySelector('.error-message');
-            if (!errorMsg) {
-                errorMsg = document.createElement('span');
-                errorMsg.className = 'error-message';
-                errorMsg.textContent = 'Выберите оценку';
-                ratingGroup.appendChild(errorMsg);
+            if (ratingGroup) {
+                ratingGroup.classList.add('error');
+                let msg = ratingGroup.querySelector('.error-message');
+                if (!msg) {
+                    msg = document.createElement('span');
+                    msg.className = 'error-message';
+                    ratingGroup.appendChild(msg);
+                }
+                msg.textContent = 'Выберите оценку';
             }
-            isValid = false;
-        } else {
+            valid = false;
+        } else if (ratingGroup) {
             ratingGroup.classList.remove('error');
-            const errorMsg = ratingGroup.querySelector('.error-message');
-            if (errorMsg) errorMsg.remove();
+            const msg = ratingGroup.querySelector('.error-message');
+            if (msg) msg.remove();
         }
         
-        if (isValid) {
-            // Здесь будет сохранение данных
-            console.log('Фильм добавлен:', {
-                title: title.value,
+        if (!valid) return;
+        
+        try {
+            await addMovie({
+                title: title.value.trim(),
                 type: type.value,
                 genre: genre.value,
-                date: date.value,
-                rating: rating.value,
-                review: document.getElementById('movieReview').value
+                rating: parseInt(rating.value),
+                watch_date: date.value,
+                review: review?.value.trim() || ''
             });
             
-            alert('Фильм успешно добавлен!');
-            window.location.href = 'index.html';
+            alert('Фильм добавлен!');
+            window.location.href = '/index.html';
+        } catch (error) {
+            alert('Ошибка: ' + error.message);
         }
     });
     
-    // Очистка ошибок при вводе
-    addMovieForm.querySelectorAll('input, select, textarea').forEach(input => {
-        input.addEventListener('input', () => {
-            if (input.closest('.input-group')) {
-                clearError(input);
-            }
-        });
-        input.addEventListener('change', () => {
-            if (input.closest('.input-group')) {
-                clearError(input);
-            }
-        });
+    addMovieForm.querySelectorAll('input, select, textarea').forEach(el => {
+        el.addEventListener('input', () => clearError(el));
+        el.addEventListener('change', () => clearError(el));
     });
 }
 
 // ============================================
-// Главная страница - модальное окно
+// Главная страница
+// ============================================
+
+async function loadMainPage() {
+    if (!isAuthenticated()) return;
+    
+    try {
+        const [recent, stats, monthly, ratings, top] = await Promise.all([
+            getRecentMovies().catch(() => ({ movies: [] })),
+            getGeneralStats().catch(() => ({})),
+            getMonthlyStats().catch(() => ({ monthly: [] })),
+            getRatingsDistribution().catch(() => ({ ratings: [], total: 0 })),
+            getTopMovies().catch(() => ({ top_movies: [] }))
+        ]);
+        
+        renderRecentMovies(recent.movies || []);
+        renderGeneralStats(stats);
+        renderMonthlyChart(monthly.monthly || []);
+        renderRatingsChart(ratings);
+        renderTopMovies(top.top_movies || []);
+    } catch (error) {
+        console.error('Ошибка загрузки:', error);
+    }
+}
+
+function renderRecentMovies(movies) {
+    const cards = document.querySelectorAll('.movie-card');
+    cards.forEach((card, i) => {
+        const movie = movies[i];
+        if (movie) {
+            card.classList.remove('empty');
+            card.classList.add('filled');
+            card.innerHTML = `
+                <div class="movie-title">${movie.title}</div>
+                <div class="movie-type">${movie.type_name}</div>
+                <div class="movie-genre">${movie.genre_name}</div>
+                <div class="movie-rating">${'★'.repeat(movie.rating)}${'☆'.repeat(5 - movie.rating)}</div>
+                <div class="movie-date">${formatDate(movie.watch_date)}</div>
+                ${movie.review ? `<div class="movie-review">${movie.review}</div>` : ''}
+            `;
+        } else {
+            card.classList.add('empty');
+            card.classList.remove('filled');
+            card.innerHTML = '<span>Нет данных</span>';
+        }
+    });
+}
+
+function renderGeneralStats(stats) {
+    const el = (id, val) => {
+        const e = document.getElementById(id);
+        if (e) e.textContent = val || 'Нет данных';
+    };
+    el('totalMovies', stats.total_movies ? `${stats.total_movies} фильмов` : null);
+    el('avgRating', stats.average_rating?.toString());
+    el('favGenre', stats.favorite_genre);
+}
+
+function renderMonthlyChart(monthly) {
+    const chart = document.getElementById('monthlyChart');
+    if (!chart) return;
+    
+    const barChart = chart.querySelector('.bar-chart');
+    const noData = chart.querySelector('.no-data-text');
+    const hasData = monthly.some(m => m.count > 0);
+    
+    if (noData) noData.style.display = hasData ? 'none' : 'block';
+    if (barChart) barChart.style.display = hasData ? 'flex' : 'none';
+    
+    if (hasData && barChart) {
+        const max = Math.max(...monthly.map(m => m.count), 1);
+        const bars = barChart.querySelectorAll('.bar');
+        bars.forEach((bar, i) => {
+            const data = monthly[i];
+            if (data) {
+                bar.style.setProperty('--height', `${(data.count / max) * 100}%`);
+                const span = bar.querySelector('span');
+                if (span) span.textContent = data.count;
+            }
+        });
+    }
+}
+
+function renderRatingsChart(data) {
+    const chart = document.getElementById('ratingsChart');
+    if (!chart) return;
+    
+    const noData = chart.querySelector('.no-data-text');
+    const pieChart = chart.querySelector('.pie-chart');
+    
+    if (noData) noData.style.display = data.total ? 'none' : 'block';
+    if (pieChart) pieChart.style.display = data.total ? 'flex' : 'none';
+    
+    if (data.total && pieChart) {
+        const colors = ['#ff4646', '#ff7b7b', '#ffa0a0', '#ffc5c5', '#ffe5e5'];
+        let gradient = '', angle = 0;
+        
+        data.ratings.forEach((item, i) => {
+            if (item.count > 0) {
+                const a = (item.percentage / 100) * 360;
+                gradient += `${colors[4 - i]} ${angle}deg ${angle + a}deg, `;
+                angle += a;
+            }
+        });
+        
+        const placeholder = pieChart.querySelector('.pie-placeholder');
+        if (placeholder && gradient) {
+            placeholder.style.background = `conic-gradient(${gradient.slice(0, -2)})`;
+            placeholder.style.border = 'none';
+        }
+    }
+}
+
+function renderTopMovies(movies) {
+    const container = document.getElementById('topMovies');
+    if (!container) return;
+    
+    if (!movies.length) {
+        container.innerHTML = '<p class="no-data-text">Нет данных</p>';
+        return;
+    }
+    
+    container.innerHTML = movies.map(m => `
+        <div class="top-movie-item">
+            <span class="rank">${m.rank}.</span>
+            <span class="name">${m.title}</span>
+            <span class="rating">${m.stars}</span>
+        </div>
+    `).join('');
+}
+
+function formatDate(str) {
+    return new Date(str).toLocaleDateString('ru-RU', {
+        day: '2-digit', month: '2-digit', year: '2-digit'
+    });
+}
+
+// ============================================
+// Страница всех фильмов
+// ============================================
+
+async function loadMoviesPage() {
+    if (!isAuthenticated()) return;
+    
+    const filters = {
+        type: document.getElementById('filterType')?.value || '',
+        genre: document.getElementById('filterGenre')?.value || '',
+        rating: document.getElementById('filterRating')?.value || '',
+        sort: document.getElementById('sortBy')?.value || '',
+        search: document.getElementById('searchInput')?.value || ''
+    };
+    
+    try {
+        const data = await getMovies(filters);
+        renderMoviesList(data.movies || []);
+    } catch (error) {
+        console.error('Ошибка:', error);
+    }
+}
+
+function renderMoviesList(movies) {
+    const container = document.getElementById('moviesList');
+    if (!container) return;
+    
+    if (!movies.length) {
+        container.innerHTML = '<p class="no-data-text">Нет фильмов</p>';
+        return;
+    }
+    
+    container.innerHTML = movies.map(m => `
+        <div class="movie-card filled" data-id="${m.id}">
+            <div class="movie-title">${m.title}</div>
+            <div class="movie-type">${m.type_name}</div>
+            <div class="movie-genre">${m.genre_name}</div>
+            <div class="movie-rating">${'★'.repeat(m.rating)}${'☆'.repeat(5 - m.rating)}</div>
+            <div class="movie-date">${formatDate(m.watch_date)}</div>
+            ${m.review ? `<div class="movie-review">${m.review}</div>` : ''}
+            <button class="btn-delete-movie" onclick="handleDeleteMovie(${m.id})">Удалить</button>
+        </div>
+    `).join('');
+}
+
+async function handleDeleteMovie(id) {
+    if (!confirm('Удалить фильм?')) return;
+    try {
+        await deleteMovie(id);
+        loadMoviesPage();
+    } catch (error) {
+        alert('Ошибка: ' + error.message);
+    }
+}
+
+// ============================================
+// Модальное окно
 // ============================================
 
 function openModal() {
@@ -311,6 +469,7 @@ function openModal() {
     if (modal) {
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
+        loadAllMoviesModal();
     }
 }
 
@@ -322,30 +481,68 @@ function closeModal() {
     }
 }
 
-// Клик по красной области для открытия модального окна
-const moviesContainer = document.getElementById('moviesContainer');
-if (moviesContainer) {
-    moviesContainer.addEventListener('click', function(e) {
-        // Не открывать модальное окно при клике на кнопку "Подробнее"
-        if (!e.target.closest('.btn-details')) {
-            openModal();
+async function loadAllMoviesModal() {
+    const grid = document.getElementById('allMoviesGrid');
+    if (!grid) return;
+    
+    try {
+        const data = await getMovies({});
+        if (!data.movies?.length) {
+            grid.innerHTML = '<p class="no-data-text">Нет фильмов</p>';
+            return;
         }
-    });
-}
-
-// Закрытие модального окна при клике вне его
-const modalOverlay = document.getElementById('allMoviesModal');
-if (modalOverlay) {
-    modalOverlay.addEventListener('click', function(e) {
-        if (e.target === modalOverlay) {
-            closeModal();
-        }
-    });
-}
-
-// Закрытие модального окна по Escape
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        closeModal();
+        grid.innerHTML = data.movies.map(m => `
+            <div class="movie-card filled">
+                <div class="movie-title">${m.title}</div>
+                <div class="movie-rating">${'★'.repeat(m.rating)}${'☆'.repeat(5 - m.rating)}</div>
+            </div>
+        `).join('');
+    } catch {
+        grid.innerHTML = '<p class="no-data-text">Ошибка загрузки</p>';
     }
+}
+
+// ============================================
+// Инициализация
+// ============================================
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Обновить header
+    if (typeof updateHeader === 'function') {
+        updateHeader();
+    }
+    
+    // Главная страница
+    if (document.getElementById('moviesContainer')) {
+        loadMainPage();
+        
+        // Клик по красной области
+        document.getElementById('moviesContainer')?.addEventListener('click', (e) => {
+            if (!e.target.closest('.btn-details')) openModal();
+        });
+    }
+    
+    // Страница фильмов
+    if (document.getElementById('moviesList')) {
+        loadMoviesPage();
+        
+        ['filterType', 'filterGenre', 'filterRating', 'sortBy'].forEach(id => {
+            document.getElementById(id)?.addEventListener('change', loadMoviesPage);
+        });
+        
+        let timeout;
+        document.getElementById('searchInput')?.addEventListener('input', () => {
+            clearTimeout(timeout);
+            timeout = setTimeout(loadMoviesPage, 300);
+        });
+    }
+});
+
+// Закрытие модального окна
+document.getElementById('allMoviesModal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'allMoviesModal') closeModal();
+});
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeModal();
 });
