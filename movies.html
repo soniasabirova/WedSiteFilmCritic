@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>КиноКритик - Все фильмы</title>
+    <link rel="stylesheet" href="stule.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <a href="index.html" class="logo">
+            <span class="logo-text">КиноКритик</span>
+        </a>
+        <a href="login.html" class="account-icon">
+            <img src="Icon.png" alt="Аккаунт">
+        </a>
+    </header>
+
+    <main class="main-content movies-page">
+        <div class="page-header">
+            <h1 class="page-title">Мои фильмы</h1>
+            <a href="index.html" class="btn-back">← Назад</a>
+        </div>
+
+        <!-- Поиск и фильтры -->
+        <div class="filters-section">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Поиск фильма..." class="search-input">
+            </div>
+            
+            <div class="filters">
+                <div class="filter-group">
+                    <label>Тип:</label>
+                    <select id="filterType" class="filter-select">
+                        <option value="">Все</option>
+                        <option value="film">Фильм</option>
+                        <option value="series">Сериал</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label>Жанр:</label>
+                    <select id="filterGenre" class="filter-select">
+                        <option value="">Все</option>
+                        <option value="action">Боевик</option>
+                        <option value="comedy">Комедия</option>
+                        <option value="drama">Драма</option>
+                        <option value="fantasy">Фэнтези</option>
+                        <option value="horror">Ужасы</option>
+                        <option value="scifi">Фантастика</option>
+                        <option value="thriller">Триллер</option>
+                        <option value="romance">Мелодрама</option>
+                        <option value="animation">Анимация</option>
+                        <option value="documentary">Документальный</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label>Рейтинг:</label>
+                    <select id="filterRating" class="filter-select">
+                        <option value="">Любой</option>
+                        <option value="5">★★★★★ (5)</option>
+                        <option value="4">★★★★☆ (4+)</option>
+                        <option value="3">★★★☆☆ (3+)</option>
+                        <option value="2">★★☆☆☆ (2+)</option>
+                        <option value="1">★☆☆☆☆ (1+)</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label>Дата:</label>
+                    <select id="sortBy" class="filter-select">
+                        <option value="">Любая</option>
+                        <option value="date-desc">Сначала новые</option>
+                        <option value="date-asc">Сначала старые</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Список фильмов -->
+        <div class="movies-list" id="moviesList">
+            <p class="no-data-text">Нет добавленных фильмов</p>
+        </div>
+
+        <!-- Кнопка добавить -->
+        <a href="add-movie.html" class="btn-add-movie fixed">+ Добавить фильм/сериал</a>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
+

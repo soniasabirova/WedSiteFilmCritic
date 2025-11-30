@@ -3,11 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>КиноКритик- вход</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>КиноКритик - Главная</title>
+    <link rel="stylesheet" href="stule.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    
+    <header class="header">
+        <a href="index.html" class="logo">
+            <span class="logo-text">КиноКритик</span>
+        </a>
+        <a href="login.html" class="account-icon">
+            <img src="Icon.png" alt="Аккаунт">
+        </a>
+    </header>
+
+    <main class="main-content">
+        <!-- Раздел Мои фильмы -->
+        <section class="section-movies">
+            <h2 class="section-title">Мои фильмы</h2>
+            
+            <div class="movies-container" id="moviesContainer">
+                <div class="movies-cards">
+                    <div class="movie-card empty" data-index="0">
+                        <span>Нет данных</span>
+                    </div>
+                    <div class="movie-card empty" data-index="1">
+                        <span>Нет данных</span>
+                    </div>
+                    <div class="movie-card empty" data-index="2">
+                        <span>Нет данных</span>
+                    </div>
+                </div>
+                <a href="movies.html" class="btn-details">Подробнее</a>
+            </div>
+
+            <a href="add-movie.html" class="btn-add-movie">+ Добавить фильм/сериал</a>
+        </section>
+
+        <!-- Раздел Статистика -->
+        <section class="section-statistics">
+            <h2 class="section-title">Статистика</h2>
+
+            <!-- Общая статистика -->
+            <div class="stats-block">
+                <h3 class="stats-subtitle">Общая статистика</h3>
+                <div class="stats-general">
+                    <div class="stat-item">
+                        <span class="stat-label">Всего фильмов</span>
+                        <span class="stat-value" id="totalMovies">Нет данных</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Средний рейтинг</span>
+                        <span class="stat-value" id="avgRating">Нет данных</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Любимый жанр</span>
+                        <span class="stat-value" id="favGenre">Нет данных</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Графики -->
+            <div class="stats-block">
+                <h3 class="stats-subtitle">Графики</h3>
+                <div class="charts-container">
+                    <div class="chart-box">
+                        <h4>Просмотры по месяцам</h4>
+                        <div class="chart-area" id="monthlyChart">
+                            <div class="bar-chart">
+                                <div class="bar" style="--height: 0%;" data-month="Янв"><span>0</span></div>
+                                <div class="bar" style="--height: 0%;" data-month="Фев"><span>0</span></div>
+                                <div class="bar" style="--height: 0%;" data-month="Мар"><span>0</span></div>
+                                <div class="bar" style="--height: 0%;" data-month="Апр"><span>0</span></div>
+                                <div class="bar" style="--height: 0%;" data-month="Май"><span>0</span></div>
+                                <div class="bar" style="--height: 0%;" data-month="Июн"><span>0</span></div>
+                                <div class="bar" style="--height: 0%;" data-month="Июл"><span>0</span></div>
+                                <div class="bar" style="--height: 0%;" data-month="Авг"><span>0</span></div>
+                                <div class="bar" style="--height: 0%;" data-month="Сен"><span>0</span></div>
+                                <div class="bar" style="--height: 0%;" data-month="Окт"><span>0</span></div>
+                                <div class="bar" style="--height: 0%;" data-month="Ноя"><span>0</span></div>
+                                <div class="bar" style="--height: 0%;" data-month="Дек"><span>0</span></div>
+                            </div>
+                            <p class="no-data-text">Нет данных</p>
+                        </div>
+                    </div>
+                    <div class="chart-box">
+                        <h4>Распределение по оценкам</h4>
+                        <div class="chart-area" id="ratingsChart">
+                            <div class="pie-chart">
+                                <div class="pie-placeholder"></div>
+                            </div>
+                            <p class="no-data-text">Нет данных</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Топ 5 фильмов -->
+            <div class="stats-block">
+                <h3 class="stats-subtitle">Топ 5 фильмов</h3>
+                <div class="top-movies" id="topMovies">
+                    <p class="no-data-text">Нет данных</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Модальное окно для просмотра всех карточек -->
+    <div class="modal-overlay" id="allMoviesModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <h2>Все фильмы</h2>
+            <div class="modal-movies-grid" id="allMoviesGrid">
+                <p class="no-data-text">Нет добавленных фильмов</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>КиноКритик - Добавить фильм</title>
+    <link rel="stylesheet" href="stule.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <a href="index.html" class="logo">
+            <span class="logo-text">КиноКритик</span>
+        </a>
+        <a href="login.html" class="account-icon">
+            <img src="Icon.png" alt="Аккаунт">
+        </a>
+    </header>
+
+    <main class="main-content add-movie-page">
+        <div class="page-header">
+            <h1 class="page-title">Добавить фильм/сериал</h1>
+            <a href="index.html" class="btn-back">← Назад</a>
+        </div>
+
+        <form class="add-movie-form" id="addMovieForm" novalidate>
+            <div class="form-row">
+                <div class="input-group">
+                    <label for="movieTitle">Название *</label>
+                    <input type="text" id="movieTitle" name="title" placeholder="Введите название">
+                </div>
+            </div>
+
+            <div class="form-row two-cols">
+                <div class="input-group">
+                    <label for="movieType">Тип *</label>
+                    <select id="movieType" name="type" class="filter-select">
+                        <option value="">Выберите тип</option>
+                        <option value="film">Фильм</option>
+                        <option value="series">Сериал</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label for="movieGenre">Жанр *</label>
+                    <select id="movieGenre" name="genre" class="filter-select">
+                        <option value="">Выберите жанр</option>
+                        <option value="action">Боевик</option>
+                        <option value="comedy">Комедия</option>
+                        <option value="drama">Драма</option>
+                        <option value="fantasy">Фэнтези</option>
+                        <option value="horror">Ужасы</option>
+                        <option value="scifi">Фантастика</option>
+                        <option value="thriller">Триллер</option>
+                        <option value="romance">Мелодрама</option>
+                        <option value="animation">Анимация</option>
+                        <option value="documentary">Документальный</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row two-cols">
+                <div class="input-group">
+                    <label for="movieDate">Дата просмотра *</label>
+                    <input type="date" id="movieDate" name="date">
+                </div>
+                
+                <div class="input-group">
+                    <label>Ваша оценка *</label>
+                    <div class="rating-input">
+                        <input type="radio" name="rating" value="5" id="star5">
+                        <label for="star5" class="star">★</label>
+                        <input type="radio" name="rating" value="4" id="star4">
+                        <label for="star4" class="star">★</label>
+                        <input type="radio" name="rating" value="3" id="star3">
+                        <label for="star3" class="star">★</label>
+                        <input type="radio" name="rating" value="2" id="star2">
+                        <label for="star2" class="star">★</label>
+                        <input type="radio" name="rating" value="1" id="star1">
+                        <label for="star1" class="star">★</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="input-group">
+                    <label for="movieReview">Отзыв</label>
+                    <textarea id="movieReview" name="review" placeholder="Напишите свой отзыв о фильме..." rows="4"></textarea>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn-cancel" onclick="window.location.href='index.html'">Отмена</button>
+                <button type="submit" class="btn-primary">Сохранить</button>
+            </div>
+        </form>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
